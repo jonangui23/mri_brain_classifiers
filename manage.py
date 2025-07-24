@@ -6,7 +6,7 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mri_classifier.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'brain_knn_project.settings')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
@@ -19,4 +19,11 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    print("=== Starting Django ===")
+    try:
+        main()
+    except Exception as e:
+        import traceback
+        print("=== Django failed to start ===")
+        traceback.print_exc()
+

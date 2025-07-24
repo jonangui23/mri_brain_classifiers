@@ -4,6 +4,7 @@ from train_model.knn_trainer import train_knn
 from train_model.evaluate import evaluate_model
 
 def index(request):
+    print("Index view called")
     healthy_dir = "/Volumes/TOSHIBA EXT/Healthy_Brain_Images"
     tumor_dir = "/Volumes/TOSHIBA EXT/Tumor_Brain_Images"
     
@@ -15,20 +16,3 @@ def index(request):
         'accuracy': accuracy * 100
     }
     return render(request, 'knn_app/index.html', context)
-
-# knn_app/urls.py
-from django.urls import path
-from . import views
-
-urlpatterns = [
-    path('', views.index, name='index'),
-]
-
-# brain_knn_project/urls.py
-from django.contrib import admin
-from django.urls import path, include
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('knn_app.urls')),
-]

@@ -1,5 +1,5 @@
 """
-WSGI config for mri_classifier project.
+WSGI config for brain_knn_project project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mri_classifier.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'brain_knn_project.settings')
 
 application = get_wsgi_application()
