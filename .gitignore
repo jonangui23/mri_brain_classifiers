@@ -1,12 +1,33 @@
+# Python
 __pycache__/
 *.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Django / SQLite
 *.sqlite3
+db.sqlite3
 *.log
-*.env
-*.DS_Store
-*.db
+*.pot
+*.mo
+
+# Environment / Secrets
+.env/
 venv/
 env/
-*.gz
-media/
+
+# OS / Editor junk
+.DS_Store
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# Machine Learning Artifacts
 *.pkl
+*.h5
+*.pt
+*.model
+trained_knn_model.pkl
+
