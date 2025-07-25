@@ -1,31 +1,29 @@
-# knn_app/knn_model/train.py
-
-import os
-import nibabel as nib
-import numpy as np
+from django.core.management.base import BaseCommand
+from knnapp.train_model.data_loader import load_data
 from sklearn.neighbors import KNeighborsClassifier
 import joblib
+import os
 
-def extract_features_from_nii(file_path):
-    img = nib.load(file_path)
-    data = img.get_fdata()
-    flattened = data.flatten()
-    return flattened[:10000]  # Reduce dimensionality
+class Command(BaseCommand):
+    help = 'Train KNN model on MRI data'
 
-def train_knn_model(healthy_dir, tumor_dir, save_path='knn_model.pkl'):
-    X, y = [], []
+    def handle(self, *args, **kwargs):
+        print("📦 Loading data...")
+        
+        healthy_dir = '/Volumes/ExternalDrive/Healthy_Brain_Images'
+        tumor_dir = '/Volumes/ExternalDrive/Tumor_Brain_Images'
 
-    for file in os.listdir(healthy_dir):
-        if file.endswith(".nii.gz"):
-            X.append(extract_features_from_nii(os.path.join(healthy_dir, file)))
-            y.append(0)  # 0 = healthy
+        # Load the sample data
+        X, y = load_data(healthy_dir, tumor_dir, max_per_class=50)
 
-    for file in os.listdir(tumor_dir):
-        if file.endswith(".nii.gz"):
-            X.append(extract_features_from_nii(os.path.join(tumor_dir, file)))
-            y.append(1)  # 1 = tumor
+        print("✅ Data loaded. Training model...")
 
-    model = KNeighborsClassifier(n_neighbors=3)
-    model.fit(X, y)
-    joblib.dump(model, save_path)
-    print(f"KNN model saved to {save_path}")
+        # Train KNN model
+        knn = KNeighborsClassifier(n_neighbors=3)
+        knn.fit(X, y)
+
+        # Save model
+        model_path = os.path.join("knnapp", "train_model", "knn_model.joblib")
+        joblib.dump(knn, model_path)
+
+        print(f"✅ Model trained and saved to {model_path}")
