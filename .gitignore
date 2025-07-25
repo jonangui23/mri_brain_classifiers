@@ -9,3 +9,4 @@ venv/
 env/
 *.gz
 media/
+*.pkl
