@@ -31,3 +31,4 @@ env/
 *.model
 trained_knn_model.pkl
 
+trained_knn_model.pkl
