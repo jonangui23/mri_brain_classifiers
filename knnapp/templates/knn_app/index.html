@@ -2,11 +2,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>MRI KNN Prediction</title>
+    <title>KNN MRI Classifier</title>
 </head>
 <body>
-    <h1>KNN Prediction Result:</h1>
-    <p>{{ prediction }}</p>
+    <h1>🧠 MRI Classifier Dashboard</h1>
+
+    {% if model_trained %}
+        <p>✅ Model is trained.</p>
+        <p>📈 Accuracy: {{ accuracy }}</p>
+    {% else %}
+        <p>⚠️ Model is not trained yet.</p>
+    {% endif %}
 </body>
 </html>
-

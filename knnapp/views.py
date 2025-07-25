@@ -1,9 +1,29 @@
 # train.py
 from django.core.management.base import BaseCommand
-from knnapp.train_model.data_loader import load_data
+from train_model.data_loader import load_data
 from sklearn.neighbors import KNeighborsClassifier
+from django.shortcuts import render
 import joblib
 import os
+
+
+def index(request):
+    model_path = os.path.join("knnapp", "train_model", "knn_model.joblib")
+
+    if os.path.exists(model_path):
+        knn, accuracy = joblib.load(model_path)
+        context = {
+            'model_trained': True,
+            'accuracy': f"{accuracy * 100:.2f}%"
+        }
+    else:
+        context = {
+            'model_trained': False,
+            'accuracy': None
+        }
+
+    return render(request, 'knnapp/index.html', context)
+
 
 class Command(BaseCommand):
     help = 'Train KNN model on MRI data'

@@ -18,6 +18,9 @@ def main():
     execute_from_command_line(sys.argv)
 
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.join(BASE_DIR, "train_model"))
+
 if __name__ == '__main__':
     print("=== Starting Django ===")
     try:
