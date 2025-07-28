@@ -21,7 +21,7 @@ class Command(BaseCommand):
         self.stdout.write("📊 Evaluating model...")
         accuracy = evaluate_model(model, X, y)
 
-        model_path = os.path.join("trained_knn_model.pkl")
+        model_path = os.path.join("train_model","trained_knn_model.joblib")
         joblib.dump((model, accuracy), model_path)
 
         self.stdout.write(self.style.SUCCESS(

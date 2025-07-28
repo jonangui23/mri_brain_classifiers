@@ -28,7 +28,7 @@ env/
 *.pkl
 *.h5
 *.pt
+*.joblib
 *.model
-trained_knn_model.pkl
-
+trained_knn_model.joblib
 trained_knn_model.pkl

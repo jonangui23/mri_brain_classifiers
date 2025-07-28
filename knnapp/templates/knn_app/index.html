@@ -1,17 +1,26 @@
-<!-- templates/knnapp/index.html -->
 <!DOCTYPE html>
 <html>
 <head>
     <title>KNN MRI Classifier</title>
 </head>
 <body>
-    <h1>🧠 MRI Classifier Dashboard</h1>
+    <h1>Brain MRI KNN Classifier</h1>
 
-    {% if model_trained %}
-        <p>✅ Model is trained.</p>
-        <p>📈 Accuracy: {{ accuracy }}</p>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" name="train_model">Train Model</button>
+    </form>
+
+    {% if metrics %}
+        <h2>Evaluation Metrics</h2>
+        <ul>
+            <li><strong>Accuracy:</strong> {{ metrics.accuracy }}%</li>
+            <li><strong>Precision:</strong> {{ metrics.precision }}%</li>
+            <li><strong>Recall:</strong> {{ metrics.recall }}%</li>
+            <li><strong>F1 Score:</strong> {{ metrics.f1_score }}%</li>
+        </ul>
     {% else %}
-        <p>⚠️ Model is not trained yet.</p>
+        <p>No metrics available. Train the model to see results.</p>
     {% endif %}
 </body>
 </html>

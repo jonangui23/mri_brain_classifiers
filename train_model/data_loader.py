@@ -21,7 +21,15 @@ def load_data(healthy_dir, tumor_dir, max_per_class = 50, target_shape = (64,64,
         for file in files if file.endswith(".nii.gz")
     ]
 
+    print(f"🧠 Found {len(healthy_files)} healthy brain images.")
+    print(f"🧠 Found {len(tumor_files)} tumor brain images.")
+    print("Healthy sample files (up to 3):", healthy_files[:3])
+    print("Tumor sample files (up to 3):", tumor_files[:3])
+
+
 #Step 2: Sample the desired number per class
+    print(f"🧠 Found {len(healthy_files)} healthy images")
+    print(f"🧠 Found {len(tumor_files)} tumor images")
     random.seed(42)
     healthy_sample = random.sample(healthy_files, min(max_per_class, len(healthy_files)))
     tumor_sample = random.sample(tumor_files, min(max_per_class, len(tumor_files)))
@@ -54,8 +62,11 @@ def load_data(healthy_dir, tumor_dir, max_per_class = 50, target_shape = (64,64,
         y.append(1)
 
 #Step 4: Final shape check and shuffle
-    print(f"✅ All MRI volumes flattened to vectors of length: {len(X[0])}")
-    print()
+    if X:
+        print(f"✅ All MRI volumes flattened to vectors of length: {len(X[0])}")
+    else:
+        raise ValueError("❌ No MRI data was loaded. Please check your directory paths and .nii.gz files.")
+
 #Step 5: Shuffle and return as NumPy arrays
     X, y = shuffle(X, y, random_state=42)
     return np.array(X), np.array(y)

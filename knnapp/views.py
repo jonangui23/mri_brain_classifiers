@@ -1,55 +1,49 @@
-# train.py
-from django.core.management.base import BaseCommand
+from django.shortcuts import render
 from train_model.data_loader import load_data
 from sklearn.neighbors import KNeighborsClassifier
-from django.shortcuts import render
-import joblib
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
 import os
-
+import joblib
 
 def index(request):
-    model_path = os.path.join("knnapp", "train_model", "knn_model.joblib")
+    model_path = os.path.join("train_model", "knn_model.joblib")
+    metrics = {}
 
-    if os.path.exists(model_path):
-        knn, accuracy = joblib.load(model_path)
-        context = {
-            'model_trained': True,
-            'accuracy': f"{accuracy * 100:.2f}%"
-        }
-    else:
-        context = {
-            'model_trained': False,
-            'accuracy': None
-        }
+    if request.method == 'POST' and 'train_model' in request.POST:
+        healthy_dir = '/Volumes/TOSHIBA EXT/Healthy_Brain_Images'
+        tumor_dir = '/Volumes/TOSHIBA EXT/Tumor_Brain_Images'
 
-    return render(request, 'knnapp/index.html', context)
-
-
-class Command(BaseCommand):
-    help = 'Train KNN model on MRI data'
-
-    def handle(self, *args, **kwargs):
-        print("📦 Loading data...")
-        
-        healthy_dir = '/Volumes/ExternalDrive/Healthy_Brain_Images'
-        tumor_dir = '/Volumes/ExternalDrive/Tumor_Brain_Images'
-
-        # Load the sample data
+        # Load data
         X, y = load_data(healthy_dir, tumor_dir, max_per_class=50)
 
-        print("✅ Data loaded. Training model...")
+        # Split: 80% train, 20% test
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=42, stratify=y
+        )
 
-        # Train KNN model
+        # Train model
         knn = KNeighborsClassifier(n_neighbors=3)
-        knn.fit(X, y)
+        knn.fit(X_train, y_train)
 
-        # Evaluate accuracy on training data (optional for now)
-        accuracy = knn.score(X, y)
+        # Evaluate
+        y_pred = knn.predict(X_test)
+        report = classification_report(y_test, y_pred, output_dict=True)
 
-        # Save model and accuracy
-        model_path = os.path.join("knnapp", "train_model", "knn_model.joblib")
-        joblib.dump((knn, accuracy), model_path)
+        # Save metrics
+        metrics = {
+            'accuracy': round(report['accuracy'] * 100, 2),
+            'precision': round(report['weighted avg']['precision'] * 100, 2),
+            'recall': round(report['weighted avg']['recall'] * 100, 2),
+            'f1_score': round(report['weighted avg']['f1-score'] * 100, 2)
+        }
 
-        print(f"✅ Model trained and saved to {model_path} with accuracy: {accuracy * 100:.2f}%")
+        # Save model and metrics
+        joblib.dump((knn, metrics), model_path)
+
+    elif os.path.exists(model_path):
+        _, metrics = joblib.load(model_path)
+
+    return render(request, 'knn_app/index.html', {'metrics': metrics})
 
 
