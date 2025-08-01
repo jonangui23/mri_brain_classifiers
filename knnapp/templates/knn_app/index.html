@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
 <head>
     <title>KNN MRI Classifier</title>
@@ -9,7 +10,12 @@
     <form method="POST">
         {% csrf_token %}
         <button type="submit" name="train_model">Train Model</button>
+
     </form>
+    <p> 
+        <a href="{% static 'paper/knn_mri_paper.pdf' %}" target="_blank">📄 View Full Paper</a>
+    <p>
+
 
     {% if metrics %}
         <h2>Evaluation Metrics</h2>
