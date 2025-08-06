@@ -7,6 +7,7 @@ from train_model.evaluate import evaluate_model
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import train_test_split
 
 class Command(BaseCommand):
     help = 'Trains the KNN model on MRI brain image data and saves it to disk.'
@@ -17,13 +18,18 @@ class Command(BaseCommand):
 
         self.stdout.write("📦 Loading data...")
         X, y = load_data(healthy_dir, tumor_dir)
+        #split data into training and testing
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=42, stratify=y
+        )
 
         self.stdout.write("🤖 Training model...")
-        model = train_knn(X, y)
+        model = train_knn(X_train, y_train)
 
         self.stdout.write("📊 Evaluating model...")
-        metrics = evaluate_model(model, X, y)
+        metrics = evaluate_model(model, X_test, y_test)
         plot_and_save_graphs(metrics)
+        
         #Remove y_true and y_pred before saving
         metrics_to_save = {
             k:v for k, v in metrics.items() if k not in ('y_true', 'y_pred')
@@ -31,8 +37,12 @@ class Command(BaseCommand):
         model_path = os.path.join("train_model","trained_knn_model.joblib")
         joblib.dump((model, metrics_to_save), model_path)
 
+        print(y_train)
+        print(y_test)
+        print(X_test)
+
         self.stdout.write(self.style.SUCCESS(
-            f"✅ Model trained and saved successfully. Accuracy: {metrics['accuracy']:.2f}%"
+            f"✅ Model trained and saved successfully. \nAccuracy: {metrics['accuracy']:.2f}%\nRecall: {metrics['recall']:.2f}%\nPrecision: {metrics['precision']:.2f}%\nF1 Score: {metrics['f1_score']:.2f}%"
         ))
 
 def plot_and_save_graphs(metrics):

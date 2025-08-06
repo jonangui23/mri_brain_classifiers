@@ -5,7 +5,7 @@ from sklearn.utils import shuffle
 import random
 import scipy.ndimage
 
-def load_data(healthy_dir, tumor_dir, max_per_class = 50, target_shape = (64,64,64)):
+def load_data(healthy_dir, tumor_dir, max_per_class = 100, target_shape = (64,64,64)):
     X = []
     y = []
 
