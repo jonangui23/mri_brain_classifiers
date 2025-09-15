@@ -25,7 +25,6 @@ class Command(BaseCommand):
         self.stdout.write("📦 Loading data...")
         X, y, paths = load_data(healthy_dir, tumor_dir)
 
-        # ---------- Audit labels vs path ----------
         y_check = np.array([label_from_path(p, healthy_dir, tumor_dir) for p in paths])
         mismatch_idx = np.where(y_check != y)[0]
         print("Label mismatches (path vs y):", len(mismatch_idx))
@@ -63,7 +62,7 @@ class Command(BaseCommand):
         if use_collapse:
             try:
                 paths_subj1, y_subj1, groups_subj1, keep_idx = one_file_per_subject(
-                    paths, y, groups, per_class_max_subjects=50, rng_seed=42
+                    paths, y, groups, per_class_max_subjects=120, rng_seed=42
                 )
                 X_subj1 = X[keep_idx]
                 print("Collapse succeeded:",
@@ -123,7 +122,7 @@ class Command(BaseCommand):
             )
         ))
 
-def one_file_per_subject(paths, y, groups, per_class_max_subjects=50, rng_seed=42):
+def one_file_per_subject(paths, y, groups, per_class_max_subjects=150, rng_seed=42):
     """
     Select at most one file per subject and cap #subjects per class.
     Returns (paths_f, y_f, groups_f, keep_indices) aligned to the *original* arrays.

@@ -13,7 +13,7 @@ def robust_zscore(x, eps = 1e-6):
     mad = np.median(np.abs(x - med)) + eps
     return (x - med)/(1.4826*mad)
 
-def brain_mask_heuristic(vol, pct=70, min_size_vox=5000):
+def brain_mask_heuristic(vol, pct=20, min_size_vox=1000):
     """fast, per volume mask:
         1) robust normalize
         2)threshold by percentile (acts like 0tsu without dataset globals)
@@ -41,12 +41,12 @@ def brain_mask_heuristic(vol, pct=70, min_size_vox=5000):
     
     return mask
 
-def resize_3d(vol, target_shape=(64,64,64)):
+def resize_3d(vol, target_shape=(170,170,170)):
     """3D resize with linear interpolation"""
     zoom_factors = [t/s for t, s in zip(target_shape, vol.shape)]
-    return ndi.zoom(vol, zoom_factors, order=1)
+    return ndi.zoom(vol, zoom_factors, order=3)
     
-def load_single_nifti(path, target_shape=(64,64,64), time_strategy="mean4d"):
+def load_single_nifti(path, target_shape=(170,170,170), time_strategy="mean4d"):
     """
     load .nii.gz -> 3d brian volume (masked, normalized, resized).
         -time_strategy: "first4d" or "mean4d" for 4D inputs.
@@ -110,7 +110,7 @@ def extract_subject_id(path: str) -> str:
     # Last resort: first token
     return parts[0] if parts else stem
 
-def load_data(healthy_dir, tumor_dir, max_per_class=100, target_shape=(64, 64, 64), time_strategy="first4d"):
+def load_data(healthy_dir, tumor_dir, max_per_class=120, target_shape=(170, 170, 170), time_strategy="first4d"):
     """
     Loads NIfTI files from healthy_dir (label=0) and tumor_dir (label=1),
     resizes to target_shape, flattens, and returns X, y, paths.
@@ -129,10 +129,10 @@ def load_data(healthy_dir, tumor_dir, max_per_class=100, target_shape=(64, 64, 6
 
     def brain_mask_heuristic(vol):
         # simple per-volume intensity threshold; tweak as needed
-        thr = np.percentile(vol, 70)
+        thr = np.percentile(vol, 40)
         return vol > thr
 
-    def load_single_nifti(path, target_shape=(64,64,64), time_strategy="first4d"):
+    def load_single_nifti(path, target_shape=(170,170,170), time_strategy="first4d"):
         vol = nib.load(path).get_fdata()
 
         # Handle 4D volumes
